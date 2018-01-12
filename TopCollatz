@@ -1,7 +1,7 @@
 Library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.std_logic_unsigned.all;
-use IEEE.sts_logic_arith.all;
+use IEEE.std_logic_arith.all;
 
 entity TopCollatz is
 end TopCollatz;
@@ -47,6 +47,9 @@ process begin
 wait for 5ns;
 reset<='1';
 D<="1010111111";
+wait for 40 ns;
+reset<='0';
+go<='1';
 wait for 40 ns;
 go<='0';
 wait for 6000ns;
