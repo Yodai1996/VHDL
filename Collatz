@@ -1,0 +1,97 @@
+Library IEEE;
+use IEEE.std_logic_1164.all;
+use IEEE.std_logic_unsigned.all;
+use IEEE.sts_logic_arith.all;
+
+entity Collatz is
+port(
+  clk :in std_logic :='0';
+  reset :in std_logic :='0';
+  go :in std_logic :='0';
+  D :in std_logic_vector(9 downto 0) :=(others=>'0');
+  monM  :out  std_logic_vector(17 downto 0) :=(others=>'0');  
+  height  :out  std_logic_vector(17 downto 0) :=(others=>'0');  
+  count  :out  std_logic_vector(7 downto 0) :=(others=>'0');  
+  monC  :out  std_logic_vector(1 downto 0) :=(others=>'0');  
+  Done  :out  std_logic :='0' 
+);
+end Collatz;
+
+architecture RTL of Collatz is
+signal  Middle  :std_logic_vector(17 downto 0) :=(others=>'0');
+signal  Max  :std_logic_vector(17 downto 0) :=(others=>'0');  
+signal  counter  :std_logic_vector(7 downto 0) :=(others=>'0');  
+signal  CCycle  :std_logic_vector(1 downto 0) :="00";
+signal  NoData  :std_logic :='0';
+signal  ToBeEnd  :std_logic :='0';
+
+begin
+process begin
+wait until rising_edge(clk);
+  if reset='1' then
+    CCycle<="00";
+  else
+    case CCycle(0) is
+    when '0'=>
+      if go='1' then CCycle(0)<='1';
+      end if;
+    when '1'=>
+      if CCycle(1)='1' and ToBeEnd='1' then CCycle(0)<='0'
+      end if;
+    when others=>
+      CCycle(0)<='0';
+    end case;
+    
+    CCycle(1)<=CCycle(0);
+  end if;
+  
+  if CCycle="01" then
+    Middle<="0000000000"&D;
+  elsif CCycle="11" then
+    if Middle(0)='0' or NoData='1' then
+      Middle <= ('0'&Middle(17 downto 1));
+    else
+      Middle <= (Middle(16 downto 0)&'1')+Middle;
+    end if;
+  end if;
+  
+  if CCycle="01" then
+    counter<="00000000";
+  elsif CCycle="11" and NoData='0' then
+    counter <= counter +1;
+  end if;
+  
+  if CCycle="01" then
+    Max <="0000000000"&D;
+  elsif CCycle="11" then
+    if Middle>Max then
+      Max <= Middle;
+    end if;
+  end if;
+  
+end process;
+
+Done<='1' when CCycle="10" else '0';
+count <=counter;
+monM <= Middle;
+monC <= CCycle;
+NoData <='1' when (Middle ="000000000000000000" or Middle ="000000000000000001") else '0';
+ToBeEnd <='1' when (Middle ="000000000000000000" or Middle ="000000000000000001" or Middle ="000000000000000010") else '0';
+height <= Max;
+
+end RTL;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
