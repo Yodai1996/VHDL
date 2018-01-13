@@ -1,0 +1,127 @@
+Library IEEE;
+use IEEE.std_logic_1164.all;
+use IEEE.std_logic_unsigned.all;
+use IEEE.std_logic_arith.all;
+
+entity TopCollatz is
+port(
+  route1  :out  std_logic_vector(9 downto 0) :=(others=>'0');  
+  route2  :out  std_logic_vector(9 downto 0) :=(others=>'0');  
+  route3  :out  std_logic_vector(9 downto 0) :=(others=>'0');  
+  route4  :out  std_logic_vector(9 downto 0) :=(others=>'0');  
+  length1  :out  std_logic_vector(7 downto 0) :=(others=>'0');  
+  length2  :out  std_logic_vector(7 downto 0) :=(others=>'0');  
+  length3  :out  std_logic_vector(7 downto 0) :=(others=>'0');  
+  length4  :out  std_logic_vector(7 downto 0) :=(others=>'0')
+);
+end TopCollatz;
+
+architecture SIM of TopCollatz is
+signal clk :std_logic :='0';
+signal reset :std_logic :='0';
+signal go :std_logic :='0';
+signal D :std_logic_vector(9 downto 0) :="0000000001";
+signal monM  :std_logic_vector(17 downto 0) :=(others=>'0');  
+signal height  :std_logic_vector(17 downto 0) :=(others=>'0');  
+signal count  :std_logic_vector(7 downto 0) :=(others=>'0');  
+signal monC  :std_logic_vector(1 downto 0) :=(others=>'0');  
+signal Done  :std_logic :='0';
+variable height1  :std_logic_vector(17 downto 0) :="000000000000000000";  
+variable height2  :std_logic_vector(17 downto 0) :="000000000000000000";  
+variable height3  :std_logic_vector(17 downto 0) :="000000000000000000";  
+variable height4  :std_logic_vector(17 downto 0) :="000000000000000000";  
+variable D1 :std_logic_vector(9 downto 0) :="0000000000";
+variable D2 :std_logic_vector(9 downto 0) :="0000000000";
+variable D3 :std_logic_vector(9 downto 0) :="0000000000";
+variable D4 :std_logic_vector(9 downto 0) :="0000000000";
+variable C1 :std_logic_vector(7 downto 0) :="00000000";
+variable C2 :std_logic_vector(7 downto 0) :="00000000";
+variable C3 :std_logic_vector(7 downto 0) :="00000000";
+variable C4 :std_logic_vector(7 downto 0) :="00000000";
+  
+component Collatz
+port(
+  clk :in std_logic :='0';
+  reset :in std_logic :='0';
+  go :in std_logic :='0';
+  D :in std_logic_vector(9 downto 0) :=(others=>'0');
+  Dout :out std_logic_vector(9 downto 0) :=(others=>'0');
+  monM  :out  std_logic_vector(17 downto 0) :=(others=>'0');  
+  height  :out  std_logic_vector(17 downto 0) :=(others=>'0');  
+  count  :out  std_logic_vector(7 downto 0) :=(others=>'0');  
+  monC  :out  std_logic_vector(1 downto 0) :=(others=>'0');  
+  Done  :out  std_logic :='0'   
+);
+end component;
+begin
+u:Collatz port map(
+  clk=>clk, reset=>reset, go=>go, D=>D, monM=>monM, Dout=>Dout,
+  height=>height, count=>count, monC=>monC, Done=>Done );
+  
+process begin
+clk<='1';
+wait for 10 ns;
+clk<='0';
+wait for 10 ns;
+end process;
+
+process begin
+if D<"1111111111" then
+  wait for 5 ns;
+  reset<='1';
+  D<=D+"0000000010";
+  wait for 40 ns;
+  reset<='0';
+  go<='1';
+  wait for 40 ns;
+  go<='0';
+  wait until rising_edge(Done);
+  wait for 50 ns;
+else
+  route1 <= D1;
+  route2 <= D2;
+  route3 <= D3;
+  route4 <= D4;
+  length1 <= C1;
+  length2 <= C2;
+  length3 <= C3;
+  length4 <= C4;
+end if;  
+end process;
+
+process begin
+if Done='1' then
+  wait for 40 ns;
+  if height4<height then
+    height4 := height;
+    D4 := Dout;
+    C4 := count;
+  end if;
+  if height3<height4 then
+    height3 := height4;
+    D3 := D4;
+    C3 := C4;
+  end if;
+  if height2<height3 then
+    height2 := height3;
+    D2 := D3;
+    C2 := C3;
+  end if;
+  if height1<height2 then
+    height1 := height2;
+    D1 := D2;
+    C1 := C2;
+  end if; 
+  Done <='0';
+end if;
+end process;
+
+end SIM;
+
+
+
+
+
+
+
+
