@@ -9,6 +9,7 @@ signal clk :std_logic :='0';
 signal reset :std_logic :='0';
 signal go :std_logic :='0';
 signal D :std_logic_vector(9 downto 0) :="0000000001";
+signal Dout :std_logic_vector(9 downto 0) :=(others=>'0');
 signal monM  :std_logic_vector(17 downto 0) :=(others=>'0');  
 signal height  :std_logic_vector(17 downto 0) :=(others=>'0');  
 signal count  :std_logic_vector(7 downto 0) :=(others=>'0');  
