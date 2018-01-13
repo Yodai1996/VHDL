@@ -4,16 +4,6 @@ use IEEE.std_logic_unsigned.all;
 use IEEE.std_logic_arith.all;
 
 entity TopCollatz is
-port(
-  route1  :out  std_logic_vector(9 downto 0) :=(others=>'0');  
-  route2  :out  std_logic_vector(9 downto 0) :=(others=>'0');  
-  route3  :out  std_logic_vector(9 downto 0) :=(others=>'0');  
-  route4  :out  std_logic_vector(9 downto 0) :=(others=>'0');  
-  length1  :out  std_logic_vector(7 downto 0) :=(others=>'0');  
-  length2  :out  std_logic_vector(7 downto 0) :=(others=>'0');  
-  length3  :out  std_logic_vector(7 downto 0) :=(others=>'0');  
-  length4  :out  std_logic_vector(7 downto 0) :=(others=>'0')
-);
 end TopCollatz;
 
 architecture SIM of TopCollatz is
@@ -21,6 +11,7 @@ signal clk :std_logic :='0';
 signal reset :std_logic :='0';
 signal go :std_logic :='0';
 signal D :std_logic_vector(9 downto 0) :="0000000001";
+signal Dout :std_logic_vector(9 downto 0) :=(others=>'0');
 signal monM  :std_logic_vector(17 downto 0) :=(others=>'0');  
 signal height  :std_logic_vector(17 downto 0) :=(others=>'0');  
 signal count  :std_logic_vector(7 downto 0) :=(others=>'0');  
@@ -78,14 +69,7 @@ if D<"1111111111" then
   wait until rising_edge(Done);
   wait for 50 ns;
 else
-  route1 <= D1;
-  route2 <= D2;
-  route3 <= D3;
-  route4 <= D4;
-  length1 <= C1;
-  length2 <= C2;
-  length3 <= C3;
-  length4 <= C4;
+  wait;
 end if;  
 end process;
 
