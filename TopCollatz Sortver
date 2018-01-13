@@ -69,7 +69,7 @@ process begin
 if D<"1111111111" then
   wait for 5 ns;
   reset<='1';
-  D<="1010111111";
+  D<=D+"0000000010";
   wait for 40 ns;
   reset<='0';
   go<='1';
